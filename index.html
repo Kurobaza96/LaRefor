@@ -99,7 +99,7 @@
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:14px;
-    padding:14px 16px 10px;
+    padding:40px 16px 10px;
   }
   .card{
     position:relative;
@@ -109,25 +109,26 @@
     min-height:150px;
     display:flex;
     flex-direction:column;
-    justify-content:space-between;
+    justify-content:flex-end;
     box-shadow:var(--shadow);
-    overflow:hidden;
-    isolation:isolate;
+    overflow:visible;
   }
-  .card.big{grid-column:1 / -1;min-height:210px;}
+  .card.big{grid-column:1 / -1;min-height:170px;padding-top:6px;}
   .card.churrasquito{background:linear-gradient(135deg,var(--red-dark),var(--orange));}
   .card.bebida{background:linear-gradient(135deg,var(--green-dark),var(--green));}
   .card.mixtas{background:linear-gradient(135deg,var(--orange-dark),var(--orange));}
   .card .photo{
-    position:absolute;inset:0;width:100%;height:100%;
-    object-fit:cover;object-position:center;
-    z-index:-2;
+    position:absolute;
+    height:auto;
+    z-index:5;
+    pointer-events:none;
+    filter:drop-shadow(0 12px 16px rgba(0,0,0,0.4));
   }
-  .card .tint{position:absolute;inset:0;z-index:-1;}
-  .card.churrasquito .tint{background:linear-gradient(180deg,rgba(90,20,20,0.94) 0%,rgba(90,20,20,0.35) 40%,rgba(90,20,20,0.25) 58%,rgba(90,20,20,0.94) 100%);}
-  .card.bebida .tint{background:linear-gradient(180deg,rgba(35,60,10,0.94) 0%,rgba(35,60,10,0.3) 40%,rgba(35,60,10,0.2) 58%,rgba(35,60,10,0.94) 100%);}
-  .card.mixtas .tint{background:linear-gradient(180deg,rgba(120,35,15,0.94) 0%,rgba(120,35,15,0.32) 40%,rgba(120,35,15,0.22) 58%,rgba(120,35,15,0.94) 100%);}
-  .card .dots{top:14px;right:14px;z-index:1;}
+  .card.churrasquito .photo{width:56%;top:-38px;right:-6px;}
+  .card.bebida .photo{width:62%;top:-34px;right:-8px;}
+  .card.mixtas .photo{width:70%;top:-30px;right:-10px;}
+  .card .body{position:relative;z-index:6;}
+  .card .dots{top:14px;left:14px;z-index:4;}
   .card .price{font-size:34px;display:flex;align-items:flex-start;gap:2px;}
   .card.big .price{font-size:44px;}
   .card .price sup{font-size:15px;margin-top:4px;}
@@ -145,6 +146,8 @@
     border-radius:14px;
     padding:6px 8px;
     align-self:flex-start;
+    position:relative;
+    z-index:6;
   }
   .stepper button{
     width:30px;height:30px;
@@ -578,9 +581,8 @@ function renderMenu(){
     return `
     <div class="card ${m.cls} ${m.big?'big':''}">
       <img class="photo" src="${m.img}" alt="${m.name}">
-      <div class="tint"></div>
-      <div>
-        <div class="dots">${'<span></span>'.repeat(12)}</div>
+      <div class="dots">${'<span></span>'.repeat(12)}</div>
+      <div class="body">
         <div class="price">Q${Math.floor(m.price)}<sup>.00</sup></div>
         <div class="name">${m.name}</div>
         <div class="desc">${m.desc}</div>
