@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Venta de Comida "La Refor"</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#A5312F;
+    --red-dark:#7A1F1F;
+    --cream:#F6F1E3;
+    --cream-2:#EFE8D4;
+    --green:#5C7A1E;
+    --green-dark:#33470F;
+    --orange:#E07A1E;
+    --orange-dark:#A5301C;
+    --ink:#2C2013;
+    --ink-soft:#5B4E3C;
+    --white:#FFFFFF;
+    --radius:22px;
+    --shadow:0 10px 24px rgba(44,32,19,0.16);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Poppins',sans-serif;
+    min-height:100vh;
+    padding-bottom:90px;
+  }
+  h1,h2,h3,.display{
+    font-family:'Anton',sans-serif;
+    font-weight:400;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    margin:0;
+  }
+  button{font-family:inherit;cursor:pointer;border:none;}
+  input,select,textarea{font-family:inherit;}
+  a{color:inherit;}
+
+  /* dot grid signature motif, echoes the flyer's corner dots */
+  .dots{
+    position:absolute;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:9px;
+    opacity:0.5;
+  }
+  .dots span{width:6px;height:6px;border-radius:50%;background:currentColor;}
+
+  /* ---------- header ---------- */
+  .topbar{
+    background:var(--red);
+    color:var(--white);
+    padding:18px 20px 16px;
+  }
+  .topbar .addr{font-weight:700;font-size:15px;line-height:1.35;}
+  .topbar .when{
+    margin-top:10px;
+    font-weight:800;
+    font-size:14px;
+    letter-spacing:0.6px;
+    text-transform:uppercase;
+    background:rgba(0,0,0,0.14);
+    display:inline-block;
+    padding:5px 10px;
+    border-radius:8px;
+  }
+  .staff-link{
+    position:absolute;
+    top:14px;right:16px;
+    font-size:11px;
+    color:rgba(255,255,255,0.75);
+    text-decoration:none;
+    border:1px solid rgba(255,255,255,0.4);
+    padding:4px 8px;
+    border-radius:20px;
+  }
+  .page-wrap{position:relative;max-width:640px;margin:0 auto;}
+
+  .title-row{
+    text-align:center;
+    padding:22px 16px 6px;
+  }
+  .title-row h1{
+    font-size:clamp(22px,6vw,30px);
+    color:var(--green-dark);
+  }
+  .title-row h1 em{color:var(--orange-dark);font-style:normal;}
+  .title-row p{color:var(--ink-soft);font-size:13px;margin-top:6px;}
+
+  /* ---------- menu cards ---------- */
+  .menu-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    padding:14px 16px 10px;
+  }
+  .card{
+    position:relative;
+    color:var(--white);
+    border-radius:var(--radius);
+    padding:16px;
+    min-height:150px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .card.big{grid-column:1 / -1;min-height:190px;}
+  .card.churrasquito{background:linear-gradient(135deg,var(--red-dark),var(--orange));}
+  .card.bebida{background:linear-gradient(135deg,var(--green-dark),var(--green));}
+  .card.mixtas{background:linear-gradient(135deg,var(--orange-dark),var(--orange));}
+  .card .dots{top:14px;right:14px;}
+  .card .price{font-size:34px;display:flex;align-items:flex-start;gap:2px;}
+  .card.big .price{font-size:44px;}
+  .card .price sup{font-size:15px;margin-top:4px;}
+  .card .price small{font-size:20px;align-self:flex-start;margin-top:6px;}
+  .card .name{font-size:22px;}
+  .card.big .name{font-size:30px;}
+  .card .desc{font-size:11px;font-weight:600;opacity:0.85;text-transform:none;letter-spacing:0;margin-top:2px;}
+
+  .stepper{
+    margin-top:10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:rgba(0,0,0,0.22);
+    border-radius:14px;
+    padding:6px 8px;
+    align-self:flex-start;
+  }
+  .stepper button{
+    width:30px;height:30px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.92);
+    color:var(--ink);
+    font-size:18px;
+    font-weight:700;
+    line-height:1;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .stepper button:disabled{opacity:0.4;}
+  .stepper .qty{min-width:22px;text-align:center;font-weight:800;font-size:16px;}
+
+  .fine-print{
+    text-align:center;
+    color:var(--orange-dark);
+    font-weight:800;
+    font-size:12.5px;
+    padding:10px 20px 6px;
+    letter-spacing:0.3px;
+  }
+
+  /* sticky order bar */
+  .order-bar{
+    position:fixed;
+    left:0;right:0;bottom:0;
+    background:var(--ink);
+    color:var(--white);
+    padding:12px 18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    box-shadow:0 -6px 18px rgba(0,0,0,0.2);
+    transform:translateY(110%);
+    transition:transform 0.25s ease;
+    z-index:40;
+  }
+  .order-bar.show{transform:translateY(0);}
+  .order-bar .sub{font-size:12px;color:#D9CFBC;}
+  .order-bar .amt{font-family:'Anton',sans-serif;font-size:20px;}
+  .order-bar button{
+    background:var(--orange);
+    color:var(--white);
+    font-weight:700;
+    padding:12px 18px;
+    border-radius:14px;
+    font-size:14px;
+  }
+
+  /* ---------- generic screen ---------- */
+  .screen{padding:18px 16px 24px;max-width:640px;margin:0 auto;}
+  .back-row{
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:14px;
+  }
+  .back-btn{
+    background:none;color:var(--ink-soft);font-weight:700;
+    font-size:14px;display:flex;align-items:center;gap:4px;
+  }
+  .screen h2{color:var(--green-dark);font-size:22px;}
+
+  .comanda{
+    background:var(--white);
+    border-radius:18px;
+    padding:6px 16px;
+    box-shadow:var(--shadow);
+  }
+  .comanda-item{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 0;
+    border-bottom:1px dashed #E1D8C2;
+    gap:10px;
+  }
+  .comanda-item:last-child{border-bottom:none;}
+  .comanda-item .nm{font-weight:700;font-size:15px;}
+  .comanda-item .pr{font-size:12px;color:var(--ink-soft);}
+  .comanda-item .stepper{margin-top:0;background:var(--cream-2);}
+  .comanda-item .stepper button{background:var(--white);}
+  .comanda-item .line-total{font-weight:800;min-width:60px;text-align:right;font-size:14px;}
+
+  .total-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:16px 4px 4px;
+    font-family:'Anton',sans-serif;
+    color:var(--green-dark);
+    font-size:20px;
+  }
+
+  .empty-note{
+    text-align:center;color:var(--ink-soft);padding:30px 10px;font-size:14px;
+  }
+
+  .field{margin-top:16px;}
+  .field label{display:block;font-weight:700;font-size:13px;margin-bottom:6px;color:var(--ink);}
+  .field input, .field select, .field textarea{
+    width:100%;
+    padding:13px 14px;
+    border-radius:12px;
+    border:1.5px solid #E1D8C2;
+    background:var(--white);
+    font-size:15px;
+    color:var(--ink);
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{
+    outline:none;border-color:var(--orange);
+  }
+  .field small{display:block;margin-top:5px;color:var(--ink-soft);font-size:11.5px;}
+
+  .primary-btn{
+    width:100%;
+    background:var(--orange-dark);
+    color:var(--white);
+    font-weight:800;
+    font-size:15px;
+    padding:16px;
+    border-radius:14px;
+    margin-top:22px;
+    letter-spacing:0.3px;
+    box-shadow:var(--shadow);
+  }
+  .primary-btn:disabled{background:#C9BFA9;box-shadow:none;}
+  .secondary-btn{
+    width:100%;background:var(--white);color:var(--ink);
+    font-weight:700;font-size:14px;padding:13px;border-radius:12px;
+    border:1.5px solid #E1D8C2;margin-top:10px;
+  }
+
+  .confirm-wrap{text-align:center;padding-top:40px;}
+  .confirm-wrap .stamp{
+    width:78px;height:78px;border-radius:50%;
+    background:var(--green);color:var(--white);
+    display:flex;align-items:center;justify-content:center;
+    font-size:36px;margin:0 auto 18px;
+    box-shadow:var(--shadow);
+  }
+  .folio{
+    display:inline-block;margin-top:14px;background:var(--ink);color:var(--white);
+    padding:8px 16px;border-radius:10px;font-family:'Anton',sans-serif;font-size:15px;letter-spacing:1px;
+  }
+
+  /* ---------- staff views ---------- */
+  .staff-head{
+    background:var(--ink);color:var(--white);
+    padding:16px 18px;
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+  }
+  .staff-head h2{font-size:19px;}
+  .staff-nav{display:flex;gap:8px;}
+  .staff-nav a{
+    font-size:11.5px;font-weight:700;
+    padding:6px 10px;border-radius:20px;
+    border:1px solid rgba(255,255,255,0.35);
+    text-decoration:none;
+  }
+  .staff-nav a.active{background:var(--orange);border-color:var(--orange);}
+
+  .sync-row{
+    display:flex;gap:8px;align-items:center;
+    padding:12px 16px;background:var(--cream-2);
+    font-size:12px;flex-wrap:wrap;
+  }
+  .sync-row input{
+    flex:1;min-width:160px;padding:9px 10px;border-radius:8px;border:1px solid #E1D8C2;font-size:12px;
+  }
+  .sync-row button{
+    background:var(--green-dark);color:var(--white);font-weight:700;
+    padding:9px 12px;border-radius:8px;font-size:12px;
+  }
+  .sync-status{width:100%;font-size:11.5px;color:var(--ink-soft);}
+  .sync-status.err{color:var(--orange-dark);font-weight:700;}
+
+  .order-card{
+    background:var(--white);border-radius:16px;padding:14px 16px;
+    margin:12px 16px;box-shadow:var(--shadow);
+  }
+  .order-card .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .order-card .folio-sm{font-family:'Anton',sans-serif;font-size:13px;color:var(--ink-soft);}
+  .order-card .time-pill{
+    background:var(--orange);color:var(--white);font-weight:800;font-size:12px;
+    padding:4px 10px;border-radius:20px;white-space:nowrap;
+  }
+  .order-card .cust{font-weight:800;font-size:16px;margin-top:6px;}
+  .order-card .phone{font-size:12.5px;color:var(--ink-soft);}
+  .order-card .items{margin-top:8px;font-size:13.5px;line-height:1.6;}
+  .order-card .note{margin-top:4px;font-size:12.5px;font-style:italic;color:var(--ink-soft);}
+  .order-card .bottom{
+    display:flex;justify-content:space-between;align-items:center;margin-top:12px;
+    border-top:1px dashed #E1D8C2;padding-top:10px;
+  }
+  .order-card .total-sm{font-family:'Anton',sans-serif;color:var(--green-dark);font-size:16px;}
+  .order-card .action-btn{
+    background:var(--green);color:var(--white);font-weight:700;font-size:12.5px;
+    padding:10px 14px;border-radius:10px;
+  }
+  .order-card.done .action-btn{background:#B9C7A0;}
+  .paid-toggle{
+    display:flex;align-items:center;gap:8px;font-weight:700;font-size:12.5px;
+  }
+  .paid-toggle input{width:18px;height:18px;}
+
+  .stats-row{
+    display:flex;gap:10px;padding:14px 16px 0;flex-wrap:wrap;
+  }
+  .stat{
+    flex:1;min-width:100px;background:var(--white);border-radius:14px;padding:12px;box-shadow:var(--shadow);
+  }
+  .stat .lbl{font-size:10.5px;color:var(--ink-soft);font-weight:700;text-transform:uppercase;}
+  .stat .val{font-family:'Anton',sans-serif;font-size:20px;color:var(--green-dark);margin-top:2px;}
+
+  .section-lbl{
+    padding:16px 16px 0;font-weight:800;font-size:12.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.4px;
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ============ DATA ============ */
+const MENU = [
+  { id:'churrasquito', name:'Churrasquito', price:25, cls:'churrasquito', big:true,
+    desc:'Carne asada, guacamole, tortillas y papa asada' },
+  { id:'bebida', name:'Bebida', price:10, cls:'bebida', big:false, desc:'Gaseosa fría' },
+  { id:'mixtas', name:'Mixtas', price:20, cls:'mixtas', big:false, desc:'Dos mixtas' }
+];
+
+const PICKUP_SLOTS = [];
+for (let h=15; h<=18; h++){
+  for (let m of [0,30]){
+    if (h===18 && m>0) continue;
+    const hour12 = h>12 ? h-12 : h;
+    const label = `${hour12}:${m===0?'00':'30'} PM`;
+    PICKUP_SLOTS.push(label);
+  }
+}
+
+/* ============ STATE ============ */
+const state = {
+  view: 'menu',          // menu | review | confirmed | cocina | control
+  cart: {},               // { itemId: qty }
+  name: '',
+  phone: '',
+  pickup: '',
+  note: '',
+  orders: [],             // { id, itemsText, itemsArr, total, name, phone, pickup, note, status, paid, ts }
+  lastFolio: null,
+  sheetUrl: '',
+  syncMsg: '',
+  syncErr: false
+};
+
+const params = new URLSearchParams(location.search);
+if (params.get('sheet')) state.sheetUrl = params.get('sheet');
+
+function cartCount(){ return Object.values(state.cart).reduce((a,b)=>a+b,0); }
+function cartTotal(){
+  return MENU.reduce((sum,m)=> sum + (state.cart[m.id]||0) * m.price, 0);
+}
+function setQty(id, qty){
+  qty = Math.max(0, Math.min(50, qty));
+  state.cart[id] = qty;
+  render();
+}
+function fmtQ(n){ return `Q${n.toFixed(2).replace('.00','.00')}`; }
+
+/* ============ ROUTING ============ */
+function currentRoute(){
+  const h = location.hash.replace('#','');
+  if (h === 'cocina') return 'cocina';
+  if (h === 'control') return 'control';
+  return null;
+}
+window.addEventListener('hashchange', () => {
+  const r = currentRoute();
+  if (r){ state.view = r; render(); }
+  else if (state.view==='cocina' || state.view==='control'){ state.view='menu'; render(); }
+});
+
+/* ============ GOOGLE SHEETS SYNC ============ */
+async function syncFromSheet(){
+  if (!state.sheetUrl) { state.syncMsg='Sin conectar a Google Sheets — usando solo este navegador.'; state.syncErr=false; render(); return; }
+  state.syncMsg = 'Sincronizando…'; state.syncErr=false; render();
+  try{
+    const res = await fetch(state.sheetUrl + (state.sheetUrl.includes('?')?'&':'?') + 'action=list');
+    const data = await res.json();
+    if (Array.isArray(data)){
+      data.forEach(row => {
+        const idx = state.orders.findIndex(o => String(o.id) === String(row.id));
+        const parsed = {
+          id: row.id,
+          itemsText: row.itemsText || row.items || '',
+          total: Number(row.total)||0,
+          name: row.name || '',
+          phone: row.phone || '',
+          pickup: row.pickup || row.pickupTime || '',
+          note: row.note || '',
+          status: row.status || 'pendiente',
+          paid: (row.paid === true || row.paid === 'TRUE' || row.paid === 'true'),
+          ts: row.ts || row.timestamp || Date.now()
+        };
+        if (idx===-1) state.orders.push(parsed);
+        else state.orders[idx] = parsed;
+      });
+    }
+    state.syncMsg = 'Actualizado ' + new Date().toLocaleTimeString('es-GT',{hour:'2-digit',minute:'2-digit'});
+    state.syncErr = false;
+  }catch(err){
+    state.syncMsg = 'No se pudo sincronizar. Revisa el enlace de Google Sheets.';
+    state.syncErr = true;
+  }
+  render();
+}
+
+async function postToSheet(action, payload){
+  if (!state.sheetUrl) return;
+  try{
+    await fetch(state.sheetUrl, {
+      method:'POST',
+      headers:{ 'Content-Type':'text/plain;charset=utf-8' }, // avoids CORS preflight on Apps Script
+      body: JSON.stringify(Object.assign({ action }, payload))
+    });
+  }catch(err){ /* fire and forget */ }
+}
+
+function applySheetUrl(url){
+  state.sheetUrl = url.trim();
+  const u = new URL(location.href);
+  if (state.sheetUrl) u.searchParams.set('sheet', state.sheetUrl);
+  else u.searchParams.delete('sheet');
+  history.replaceState(null,'',u.toString());
+  syncFromSheet();
+}
+
+/* ============ ORDER ACTIONS ============ */
+function goReview(){
+  if (cartCount()===0) return;
+  state.view='review'; render(); window.scrollTo(0,0);
+}
+function backToMenu(){ state.view='menu'; render(); window.scrollTo(0,0); }
+
+function confirmOrder(){
+  const items = MENU.filter(m => state.cart[m.id] > 0)
+    .map(m => ({ name:m.name, qty:state.cart[m.id], price:m.price }));
+  if (items.length===0 || !state.name.trim() || !state.phone.trim() || !state.pickup) return;
+
+  const id = Date.now().toString();
+  const itemsText = items.map(i=>`${i.qty}x ${i.name}`).join(', ');
+  const total = cartTotal();
+  const order = {
+    id, itemsText, itemsArr: items, total,
+    name: state.name.trim(), phone: state.phone.trim(),
+    pickup: state.pickup, note: state.note.trim(),
+    status:'pendiente', paid:false, ts: Date.now()
+  };
+  state.orders.unshift(order);
+  postToSheet('newOrder', {
+    id, itemsText, total, name: order.name, phone: order.phone,
+    pickup: order.pickup, note: order.note, status:'pendiente', paid:false, ts: order.ts
+  });
+
+  state.lastFolio = id.slice(-4);
+  state.cart = {}; state.name=''; state.phone=''; state.pickup=''; state.note='';
+  state.view = 'confirmed';
+  render(); window.scrollTo(0,0);
+}
+
+function newOrder(){ state.view='menu'; render(); window.scrollTo(0,0); }
+
+function markStatus(id, status){
+  const o = state.orders.find(o=>o.id===id);
+  if (!o) return;
+  o.status = status;
+  postToSheet('updateStatus', { id, status });
+  render();
+}
+function togglePaid(id){
+  const o = state.orders.find(o=>o.id===id);
+  if (!o) return;
+  o.paid = !o.paid;
+  postToSheet('updateStatus', { id, paid:o.paid });
+  render();
+}
+
+/* ============ RENDER ============ */
+function render(){
+  const app = document.getElementById('app');
+  if (state.view==='cocina'){ app.innerHTML = renderCocina(); attachStaffHandlers(); return; }
+  if (state.view==='control'){ app.innerHTML = renderControl(); attachStaffHandlers(); return; }
+  app.innerHTML = renderCustomer();
+  attachCustomerHandlers();
+}
+
+function renderHeader(){
+  return `
+  <div class="page-wrap">
+    <div class="topbar">
+      <a class="staff-link" href="#cocina">Personal</a>
+      <div class="addr">48 Calle 1-12 Zona 12, Villa Nueva<br>Centro de Estaca</div>
+      <div class="when">Sábado 29 Abr &nbsp;·&nbsp; 03:00 PM – 06:00 PM</div>
+    </div>
+    <div class="title-row">
+      <h1>Venta de comida <em>"La Refor"</em></h1>
+      <p>Elige tus cantidades y arma tu pedido para recoger.</p>
+    </div>
+  </div>`;
+}
+
+function renderCustomer(){
+  if (state.view==='menu') return renderHeader() + renderMenu();
+  if (state.view==='review') return renderReview();
+  if (state.view==='confirmed') return renderConfirmed();
+  return '';
+}
+
+function renderMenu(){
+  const cards = MENU.map(m => {
+    const qty = state.cart[m.id]||0;
+    return `
+    <div class="card ${m.cls} ${m.big?'big':''}">
+      <div>
+        <div class="dots">${'<span></span>'.repeat(12)}</div>
+        <div class="price">Q${Math.floor(m.price)}<sup>.00</sup></div>
+        <div class="name">${m.name}</div>
+        <div class="desc">${m.desc}</div>
+      </div>
+      <div class="stepper">
+        <button data-act="dec" data-id="${m.id}" ${qty===0?'disabled':''}>−</button>
+        <div class="qty">${qty}</div>
+        <button data-act="inc" data-id="${m.id}">+</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  const count = cartCount();
+  const total = cartTotal();
+
+  return `
+  <div class="menu-grid">${cards}</div>
+  <div class="fine-print">*Ven y apoya para recaudar dinero para el campamento de FSY</div>
+  <div class="order-bar ${count>0?'show':''}">
+    <div>
+      <div class="sub">${count} artículo${count===1?'':'s'}</div>
+      <div class="amt">${fmtQ(total)}</div>
+    </div>
+    <button id="btnReview">Ver mi pedido →</button>
+  </div>`;
+}
+
+function renderReview(){
+  const items = MENU.filter(m => state.cart[m.id] > 0);
+  const total = cartTotal();
+  const rows = items.map(m => `
+    <div class="comanda-item">
+      <div style="flex:1">
+        <div class="nm">${m.name}</div>
+        <div class="pr">${fmtQ(m.price)} c/u</div>
+      </div>
+      <div class="stepper">
+        <button data-act="dec" data-id="${m.id}">−</button>
+        <div class="qty">${state.cart[m.id]}</div>
+        <button data-act="inc" data-id="${m.id}">+</button>
+      </div>
+      <div class="line-total">${fmtQ(m.price*state.cart[m.id])}</div>
+    </div>`).join('');
+
+  const slots = PICKUP_SLOTS.map(s => `<option value="${s}" ${state.pickup===s?'selected':''}>${s}</option>`).join('');
+  const canConfirm = items.length>0 && state.name.trim() && state.phone.trim() && state.pickup;
+
+  return `
+  <div class="screen">
+    <div class="back-row">
+      <button class="back-btn" id="btnBack">‹ Volver al menú</button>
+    </div>
+    <h2>Tu comanda</h2>
+    <div class="comanda" style="margin-top:12px;">
+      ${rows || '<div class="empty-note">No has agregado nada todavía.</div>'}
+    </div>
+    <div class="total-row"><span>Total</span><span>${fmtQ(total)}</span></div>
+
+    <div class="field">
+      <label>Nombre</label>
+      <input id="inName" type="text" placeholder="¿A nombre de quién?" value="${escapeAttr(state.name)}">
+    </div>
+    <div class="field">
+      <label>Teléfono</label>
+      <input id="inPhone" type="tel" placeholder="Número de contacto" value="${escapeAttr(state.phone)}">
+    </div>
+    <div class="field">
+      <label>Hora para recoger</label>
+      <select id="inPickup">
+        <option value="">Selecciona una hora</option>
+        ${slots}
+      </select>
+      <small>Disponible entre 3:00 PM y 6:00 PM.</small>
+    </div>
+    <div class="field">
+      <label>Notas (opcional)</label>
+      <textarea id="inNote" rows="2" placeholder="Ej. sin cebolla, es para 2 personas...">${escapeHtml(state.note)}</textarea>
+    </div>
+
+    <button class="primary-btn" id="btnConfirm" ${canConfirm?'':'disabled'}>Confirmar pedido</button>
+  </div>`;
+}
+
+function renderConfirmed(){
+  return `
+  <div class="screen confirm-wrap">
+    <div class="stamp">✓</div>
+    <h2>¡Pedido confirmado!</h2>
+    <p style="color:var(--ink-soft);margin-top:8px;">Preséntate a la hora indicada para recoger tu orden.</p>
+    <div class="folio">FOLIO #${state.lastFolio}</div>
+    <button class="secondary-btn" id="btnNewOrder" style="margin-top:26px;">Hacer otro pedido</button>
+  </div>`;
+}
+
+function escapeHtml(s){ return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function escapeAttr(s){ return escapeHtml(s); }
+
+/* ---------- staff: cocina ---------- */
+function renderSyncRow(){
+  return `
+  <div class="sync-row">
+    <input id="sheetUrlInput" type="text" placeholder="Enlace de Google Apps Script (Web App URL)" value="${escapeAttr(state.sheetUrl)}">
+    <button id="btnSaveSheet">Conectar</button>
+    <button id="btnSync">↻ Sincronizar</button>
+    <div class="sync-status ${state.syncErr?'err':''}">${state.syncMsg || (state.sheetUrl ? 'Conectado. Pulsa Sincronizar para actualizar.' : 'Sin conectar — pega el enlace de tu Google Sheet.')}</div>
+  </div>`;
+}
+
+function renderCocina(){
+  const pend = state.orders.filter(o=>o.status==='pendiente').sort((a,b)=> a.pickup.localeCompare(b.pickup) || a.ts-b.ts);
+  const cards = pend.map(o => `
+    <div class="order-card">
+      <div class="top">
+        <div>
+          <div class="folio-sm">#${o.id.slice(-4)}</div>
+          <div class="cust">${escapeHtml(o.name)}</div>
+          <div class="phone">${escapeHtml(o.phone)}</div>
+        </div>
+        <div class="time-pill">${o.pickup}</div>
+      </div>
+      <div class="items">${escapeHtml(o.itemsText)}</div>
+      ${o.note ? `<div class="note">"${escapeHtml(o.note)}"</div>` : ''}
+      <div class="bottom">
+        <div class="total-sm">${fmtQ(o.total)}</div>
+        <button class="action-btn" data-id="${o.id}" data-act="dispatch">Marcar entregado</button>
+      </div>
+    </div>`).join('');
+
+  return `
+  <div class="staff-head">
+    <h2>Cocina</h2>
+    <div class="staff-nav">
+      <a href="#cocina" class="active">Pendientes</a>
+      <a href="#control">Entregados</a>
+    </div>
+  </div>
+  ${renderSyncRow()}
+  <div class="section-lbl">${pend.length} pedido${pend.length===1?'':'s'} pendiente${pend.length===1?'':'s'}</div>
+  ${cards || '<div class="empty-note">No hay pedidos pendientes.</div>'}
+  <div style="height:20px"></div>`;
+}
+
+function renderControl(){
+  const done = state.orders.filter(o=>o.status!=='pendiente').sort((a,b)=> b.ts-a.ts);
+  const totalCobrado = done.filter(o=>o.paid).reduce((s,o)=>s+o.total,0);
+  const totalPendiente = done.filter(o=>!o.paid).reduce((s,o)=>s+o.total,0);
+
+  const cards = done.map(o => `
+    <div class="order-card done">
+      <div class="top">
+        <div>
+          <div class="folio-sm">#${o.id.slice(-4)}</div>
+          <div class="cust">${escapeHtml(o.name)}</div>
+          <div class="phone">${escapeHtml(o.phone)}</div>
+        </div>
+        <div class="time-pill">${o.pickup}</div>
+      </div>
+      <div class="items">${escapeHtml(o.itemsText)}</div>
+      <div class="bottom">
+        <div class="total-sm">${fmtQ(o.total)}</div>
+        <label class="paid-toggle">
+          <input type="checkbox" data-id="${o.id}" data-act="paid" ${o.paid?'checked':''}>
+          ${o.paid ? 'Pagado' : 'Marcar pagado'}
+        </label>
+      </div>
+    </div>`).join('');
+
+  return `
+  <div class="staff-head">
+    <h2>Control de entregas</h2>
+    <div class="staff-nav">
+      <a href="#cocina">Pendientes</a>
+      <a href="#control" class="active">Entregados</a>
+    </div>
+  </div>
+  ${renderSyncRow()}
+  <div class="stats-row">
+    <div class="stat"><div class="lbl">Entregados</div><div class="val">${done.length}</div></div>
+    <div class="stat"><div class="lbl">Cobrado</div><div class="val">${fmtQ(totalCobrado)}</div></div>
+    <div class="stat"><div class="lbl">Por cobrar</div><div class="val">${fmtQ(totalPendiente)}</div></div>
+  </div>
+  <div class="section-lbl">Historial</div>
+  ${cards || '<div class="empty-note">Todavía no hay pedidos entregados.</div>'}
+  <div style="height:20px"></div>`;
+}
+
+/* ============ EVENT WIRING ============ */
+function attachCustomerHandlers(){
+  document.querySelectorAll('[data-act="inc"]').forEach(b=>{
+    b.onclick = ()=> setQty(b.dataset.id, (state.cart[b.dataset.id]||0)+1);
+  });
+  document.querySelectorAll('[data-act="dec"]').forEach(b=>{
+    b.onclick = ()=> setQty(b.dataset.id, (state.cart[b.dataset.id]||0)-1);
+  });
+  const rev = document.getElementById('btnReview'); if (rev) rev.onclick = goReview;
+  const back = document.getElementById('btnBack'); if (back) back.onclick = backToMenu;
+  const conf = document.getElementById('btnConfirm'); if (conf) conf.onclick = confirmOrder;
+  const again = document.getElementById('btnNewOrder'); if (again) again.onclick = newOrder;
+
+  const nm = document.getElementById('inName');
+  if (nm) nm.oninput = e => { state.name = e.target.value; syncConfirmState(); };
+  const ph = document.getElementById('inPhone');
+  if (ph) ph.oninput = e => { state.phone = e.target.value; syncConfirmState(); };
+  const pk = document.getElementById('inPickup');
+  if (pk) pk.onchange = e => { state.pickup = e.target.value; syncConfirmState(); };
+  const nt = document.getElementById('inNote');
+  if (nt) nt.oninput = e => { state.note = e.target.value; };
+}
+
+function syncConfirmState(){
+  const btn = document.getElementById('btnConfirm');
+  if (!btn) return;
+  const has = cartCount()>0 && state.name.trim() && state.phone.trim() && state.pickup;
+  btn.disabled = !has;
+}
+
+let pollTimer = null;
+function attachStaffHandlers(){
+  document.querySelectorAll('[data-act="dispatch"]').forEach(b=>{
+    b.onclick = ()=> markStatus(b.dataset.id, 'entregado');
+  });
+  document.querySelectorAll('[data-act="paid"]').forEach(b=>{
+    b.onclick = ()=> togglePaid(b.dataset.id);
+  });
+  const saveBtn = document.getElementById('btnSaveSheet');
+  if (saveBtn) saveBtn.onclick = ()=> applySheetUrl(document.getElementById('sheetUrlInput').value);
+  const syncBtn = document.getElementById('btnSync');
+  if (syncBtn) syncBtn.onclick = syncFromSheet;
+
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(()=>{
+    if (state.view==='cocina' || state.view==='control') syncFromSheet();
+  }, 20000);
+}
+
+/* ============ INIT ============ */
+const initialRoute = currentRoute();
+if (initialRoute) state.view = initialRoute;
+render();
+if (state.sheetUrl) syncFromSheet();
+</script>
+</body>
+</html>
